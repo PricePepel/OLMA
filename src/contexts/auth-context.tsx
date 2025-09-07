@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import { User as UserProfile } from '@/types/database'
@@ -29,10 +29,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  
+  // Create Supabase client with error handling
+  const supabase = useMemo(() => {
+    try {
+      return createClient()
+    } catch (error) {
+      console.warn('Failed to create Supabase client:', error)
+      return null
+    }
+  }, [])
 
   // Memoized profile fetching with caching
   const fetchProfile = useCallback(async (userId: string) => {
+    if (!supabase) {
+      console.warn('Supabase client not available, skipping profile fetch')
+      return
+    }
+    
     try {
       // Check cache first
       const cached = profileCache.get(userId)
@@ -107,6 +121,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
+      if (!supabase) {
+        setLoading(false)
+        return
+      }
+      
       try {
         // Check if we have a cached session first
         const cachedSession = localStorage.getItem('supabase.auth.token')
@@ -158,6 +177,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getInitialSession()
 
     // Listen for auth changes
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.id)
@@ -182,6 +206,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [fetchProfile])
 
   const signIn = async (email: string, password: string) => {
+    if (!supabase) {
+      return { error: new Error('Supabase client not available') }
+    }
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -190,6 +218,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    if (!supabase) {
+      return { error: new Error('Supabase client not available') }
+    }
+    
     const username = generateUsername(fullName)
     
     const { data, error } = await supabase.auth.signUp({
@@ -224,10 +256,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
+    if (!supabase) {
+      return
+    }
+    
     await supabase.auth.signOut()
   }
 
   const signInWithGoogle = async () => {
+    if (!supabase) {
+      return { error: new Error('Supabase client not available') }
+    }
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -238,6 +278,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signInWithGitHub = async () => {
+    if (!supabase) {
+      return { error: new Error('Supabase client not available') }
+    }
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
@@ -248,6 +292,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
+    if (!supabase) {
+      return { error: new Error('Supabase client not available') }
+    }
+    
     if (!user) return { error: new Error('No user logged in') }
 
     const { data, error } = await supabase
