@@ -1,0 +1,885 @@
+{
+  "info": {
+    "name": "OLMA API Collection",
+    "description": "Complete API collection for testing OLMA peer learning network endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{supabase_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "supabase_url",
+      "value": "https://your-project.supabase.co",
+      "type": "string"
+    },
+    {
+      "key": "supabase_anon_key",
+      "value": "your-supabase-anon-key",
+      "type": "string"
+    },
+    {
+      "key": "supabase_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Sign Up",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"options\": {\n    \"data\": {\n      \"full_name\": \"Test User\",\n      \"username\": \"testuser\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/auth/v1/signup",
+              "host": ["{{supabase_url}}"],
+              "path": ["auth", "v1", "signup"]
+            }
+          }
+        },
+        {
+          "name": "Sign In",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/auth/v1/token?grant_type=password",
+              "host": ["{{supabase_url}}"],
+              "path": ["auth", "v1", "token"],
+              "query": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/auth/v1/user",
+              "host": ["{{supabase_url}}"],
+              "path": ["auth", "v1", "user"]
+            }
+          }
+        },
+        {
+          "name": "Sign Out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/auth/v1/logout",
+              "host": ["{{supabase_url}}"],
+              "path": ["auth", "v1", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/users?select=*&id=eq.{{user_id}}",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "users"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*"
+                },
+                {
+                  "key": "id",
+                  "value": "eq.{{user_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Updated Name\",\n  \"bio\": \"Updated bio\",\n  \"location\": \"New York, NY\"\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/users?id=eq.{{user_id}}",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "users"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "eq.{{user_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/users?select=*&status=eq.active",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "users"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*"
+                },
+                {
+                  "key": "status",
+                  "value": "eq.active"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Skills",
+      "item": [
+        {
+          "name": "Get All Skills",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/skills?select=*",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "skills"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Skills by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/skills?select=*&category=eq.Programming",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "skills"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*"
+                },
+                {
+                  "key": "category",
+                  "value": "eq.Programming"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Skills",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/user_skills?select=*,skills(*)&user_id=eq.{{user_id}}",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "user_skills"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*,skills(*)"
+                },
+                {
+                  "key": "user_id",
+                  "value": "eq.{{user_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add User Skill",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"skill_id\": \"{{skill_id}}\",\n  \"proficiency_level\": 4,\n  \"can_teach\": true,\n  \"can_learn\": false,\n  \"hourly_rate\": 50\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/user_skills",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "user_skills"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clubs",
+      "item": [
+        {
+          "name": "Get All Clubs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/clubs?select=*&is_public=eq.true",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "clubs"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*"
+                },
+                {
+                  "key": "is_public",
+                  "value": "eq.true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Club",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"JavaScript Developers\",\n  \"description\": \"A club for JavaScript enthusiasts\",\n  \"category\": \"Programming\",\n  \"location\": \"New York, NY\",\n  \"is_public\": true,\n  \"created_by\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/clubs",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "clubs"]
+            }
+          }
+        },
+        {
+          "name": "Get Club Members",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/club_members?select=*,users(*)&club_id=eq.{{club_id}}",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "club_members"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*,users(*)"
+                },
+                {
+                  "key": "club_id",
+                  "value": "eq.{{club_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Join Club",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"club_id\": \"{{club_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"role\": \"member\"\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/club_members",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "club_members"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Get All Events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/events?select=*&status=eq.published&start_time=gte.now()",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "events"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*"
+                },
+                {
+                  "key": "status",
+                  "value": "eq.published"
+                },
+                {
+                  "key": "start_time",
+                  "value": "gte.now()"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"React Workshop\",\n  \"description\": \"Learn React fundamentals\",\n  \"club_id\": \"{{club_id}}\",\n  \"location\": \"Central Library\",\n  \"start_time\": \"2024-01-15T14:00:00Z\",\n  \"end_time\": \"2024-01-15T16:00:00Z\",\n  \"max_attendees\": 20,\n  \"status\": \"published\",\n  \"created_by\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/events",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "events"]
+            }
+          }
+        },
+        {
+          "name": "Get Event Attendees",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/event_attendees?select=*,users(*)&event_id=eq.{{event_id}}",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "event_attendees"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*,users(*)"
+                },
+                {
+                  "key": "event_id",
+                  "value": "eq.{{event_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "RSVP to Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_id\": \"{{event_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"status\": \"confirmed\"\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/event_attendees",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "event_attendees"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Get Conversations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/conversations?select=*&or=(user1_id.eq.{{user_id}},user2_id.eq.{{user_id}})",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "conversations"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*"
+                },
+                {
+                  "key": "or",
+                  "value": "(user1_id.eq.{{user_id}},user2_id.eq.{{user_id}})"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/messages?select=*&conversation_id=eq.{{conversation_id}}&order=created_at.asc",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "messages"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*"
+                },
+                {
+                  "key": "conversation_id",
+                  "value": "eq.{{conversation_id}}"
+                },
+                {
+                  "key": "order",
+                  "value": "created_at.asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversation_id\": \"{{conversation_id}}\",\n  \"sender_id\": \"{{user_id}}\",\n  \"content\": \"Hello! How are you?\"\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/messages",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "messages"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Get Posts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/posts?select=*,users(*)&is_public=eq.true&is_approved=eq.true&order=created_at.desc",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "posts"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*,users(*)"
+                },
+                {
+                  "key": "is_public",
+                  "value": "eq.true"
+                },
+                {
+                  "key": "is_approved",
+                  "value": "eq.true"
+                },
+                {
+                  "key": "order",
+                  "value": "created_at.desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"content\": \"Just finished teaching a great JavaScript workshop!\",\n  \"is_public\": true\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/posts",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "posts"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Achievements",
+      "item": [
+        {
+          "name": "Get All Achievements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/achievements?select=*",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "achievements"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Achievements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/user_achievements?select=*,achievements(*)&user_id=eq.{{user_id}}",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "user_achievements"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*,achievements(*)"
+                },
+                {
+                  "key": "user_id",
+                  "value": "eq.{{user_id}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Create Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reporter_id\": \"{{user_id}}\",\n  \"reported_user_id\": \"{{reported_user_id}}\",\n  \"type\": \"inappropriate_content\",\n  \"reason\": \"User posted inappropriate content\"\n}"
+            },
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/reports",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "reports"]
+            }
+          }
+        },
+        {
+          "name": "Get User Reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_anon_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supabase_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabase_url}}/rest/v1/reports?select=*&reporter_id=eq.{{user_id}}",
+              "host": ["{{supabase_url}}"],
+              "path": ["rest", "v1", "reports"],
+              "query": [
+                {
+                  "key": "select",
+                  "value": "*"
+                },
+                {
+                  "key": "reporter_id",
+                  "value": "eq.{{user_id}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
+

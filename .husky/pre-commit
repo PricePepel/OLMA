@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run linting
+npm run lint
+
+# Run type checking
+npm run type-check
+
+# Run unit tests
+npm test -- --passWithNoTests
+
+# Run E2E tests (only on main branch or if explicitly requested)
+if [ "$(git branch --show-current)" = "main" ] || [ "$SKIP_E2E" != "true" ]; then
+  echo "Running E2E tests..."
+  npm run test:e2e -- --reporter=line
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
