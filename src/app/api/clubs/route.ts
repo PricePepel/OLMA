@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { NextRequest } from 'next/server'
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -77,15 +76,15 @@ export async function GET(request: NextRequest) {
         const memberCount = club._count?.[0]?.count || 0
 
         // Check if user is a member
-        const { data: membership, error: membershipError } = await supabase
+        const { data: membership, error: _membershipError } = await supabase
           .from('club_members')
           .select('role, joined_at')
           .eq('club_id', club.id)
           .eq('user_id', user.id)
           .single()
 
-        if (membershipError && membershipError.code !== 'PGRST116') {
-          console.error('Error fetching membership:', membershipError)
+        if (_membershipError && _membershipError.code !== 'PGRST116') {
+          console.error('Error fetching membership:', _membershipError)
         }
 
         // Get event count

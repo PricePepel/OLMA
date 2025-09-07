@@ -50,3 +50,5 @@ CREATE POLICY "Users can delete their meeting invitations" ON meeting_invitation
   FOR DELETE USING (auth.uid()::text = inviter_id::text);
 
 
+
+

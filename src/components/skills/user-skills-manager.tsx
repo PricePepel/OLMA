@@ -51,15 +51,6 @@ export function UserSkillsManager() {
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingSkill, setEditingSkill] = useState<UserSkill | null>(null)
 
-  // Don't render if no user
-  if (!user) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">Please log in to manage your skills.</p>
-      </div>
-    )
-  }
-
   // Form state
   const [formData, setFormData] = useState({
     skillId: '',
@@ -84,6 +75,15 @@ export function UserSkillsManager() {
       setUserSkills([])
     }
   }, [user])
+
+  // Don't render if no user
+  if (!user) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Please log in to manage your skills.</p>
+      </div>
+    )
+  }
 
   const fetchSkills = async () => {
     setIsLoadingSkills(true)

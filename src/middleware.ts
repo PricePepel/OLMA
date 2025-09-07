@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { getEnvVar } from '@/lib/env'
 
 // Rate limiting store (in production, use Redis)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
@@ -70,10 +71,18 @@ export async function middleware(request: NextRequest) {
   // Add performance headers
   response.headers.set('X-Response-Time', `${Date.now() - startTime}ms`)
 
-  // Create Supabase client
+  // Create Supabase client with error handling
+  const supabaseUrl = getEnvVar('NEXT_PUBLIC_SUPABASE_URL')
+  const supabaseAnonKey = getEnvVar('NEXT_PUBLIC_SUPABASE_ANON_KEY')
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('Missing Supabase environment variables in middleware')
+    return response
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         get(name: string) {

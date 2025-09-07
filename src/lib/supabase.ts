@@ -1,17 +1,55 @@
 import { createClient } from '@supabase/supabase-js'
 import { createBrowserClient } from '@supabase/ssr'
+import { getEnvVar, isBuildTime } from './env'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Helper function to get environment variables safely
+function getSupabaseConfig() {
+  const supabaseUrl = getEnvVar('NEXT_PUBLIC_SUPABASE_URL')
+  const supabaseAnonKey = getEnvVar('NEXT_PUBLIC_SUPABASE_ANON_KEY')
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // During build time, return null instead of throwing
+    if (isBuildTime()) {
+      console.warn('Missing Supabase environment variables during build')
+      return null
+    }
+    throw new Error('Missing Supabase environment variables')
+  }
+
+  return { supabaseUrl, supabaseAnonKey }
+}
+
+// Create a lazy-initialized client
+let _supabase: ReturnType<typeof createClient> | null = null
+
+export const supabase = new Proxy({} as ReturnType<typeof createClient>, {
+  get(target, prop) {
+    if (!_supabase) {
+      const config = getSupabaseConfig()
+      if (!config) {
+        // Return a mock client during build
+        return () => Promise.resolve({ data: null, error: null })
+      }
+      _supabase = createClient(config.supabaseUrl, config.supabaseAnonKey)
+    }
+    return _supabase[prop as keyof typeof _supabase]
+  }
+})
 
 export const createClientComponentClient = () => {
-  return createBrowserClient(supabaseUrl, supabaseAnonKey)
+  const config = getSupabaseConfig()
+  if (!config) {
+    throw new Error('Missing Supabase environment variables')
+  }
+  return createBrowserClient(config.supabaseUrl, config.supabaseAnonKey)
 }
 
 export const createServerComponentClient = () => {
-  return createClient(supabaseUrl, supabaseAnonKey, {
+  const config = getSupabaseConfig()
+  if (!config) {
+    throw new Error('Missing Supabase environment variables')
+  }
+  return createClient(config.supabaseUrl, config.supabaseAnonKey, {
     auth: {
       persistSession: false,
     },

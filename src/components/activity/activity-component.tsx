@@ -1,10 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { 
   Activity,
@@ -12,13 +10,9 @@ import {
   Users,
   MessageCircle,
   Star,
-  TrendingUp,
   Award,
-  Clock,
-  MapPin,
   Building2
 } from 'lucide-react'
-import { useApi } from '@/hooks/use-api'
 import { useAuth } from '@/contexts/auth-context'
 
 interface ActivityItem {
@@ -47,7 +41,7 @@ interface Stats {
 }
 
 export function ActivityComponent() {
-  const { user } = useAuth()
+  const { user: _user } = useAuth()
   const [selectedTab, setSelectedTab] = useState('recent')
 
   // Mock data for now - in a real app, you'd fetch this from API
@@ -331,6 +325,7 @@ export function ActivityComponent() {
     </div>
   )
 }
+
 
 
 

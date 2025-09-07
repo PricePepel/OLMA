@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   serverExternalPackages: ['@supabase/supabase-js'],
+  output: 'standalone',
   images: {
     domains: [
       'localhost',
@@ -29,6 +30,9 @@ const nextConfig = {
         ]
       }
     ]
+  },
+  experimental: {
+    outputFileTracingRoot: undefined,
   }
 }
 

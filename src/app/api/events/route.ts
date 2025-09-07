@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { NextRequest } from 'next/server'
 import { 
   createErrorResponse, 
   createSuccessResponse, 
@@ -83,15 +82,15 @@ export async function GET(request: NextRequest) {
         }
 
         // Check if user is attending
-        const { data: userAttendance, error: attendanceError } = await supabase
+        const { data: userAttendance, error: _attendanceError } = await supabase
           .from('event_attendees')
           .select('status')
           .eq('event_id', event.id)
           .eq('user_id', user.id)
           .single()
 
-        if (attendanceError && attendanceError.code !== 'PGRST116') {
-          console.error('Error fetching user attendance:', attendanceError)
+        if (_attendanceError && _attendanceError.code !== 'PGRST116') {
+          console.error('Error fetching user attendance:', _attendanceError)
         }
 
         return {
@@ -189,6 +188,7 @@ export async function POST(request: NextRequest) {
     return errorHandlers.internalError(error)
   }
 }
+
 
 
 

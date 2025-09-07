@@ -20,3 +20,5 @@ ON CONFLICT (id) DO NOTHING; -- Skip if skills already exist
 
 
 
+
+

@@ -29,7 +29,7 @@ export default function SignUpPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              "Start your learning journey today. Connect with local experts, join skill-sharing communities, and discover new opportunities."
+              &ldquo;Start your learning journey today. Connect with local experts, join skill-sharing communities, and discover new opportunities.&rdquo;
             </p>
             <footer className="text-sm">Alex Chen, OLMA Community</footer>
           </blockquote>

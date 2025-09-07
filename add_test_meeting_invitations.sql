@@ -112,3 +112,5 @@ UPDATE skills SET hourly_rate = 25 WHERE id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa
 ALTER TABLE skills ADD COLUMN IF NOT EXISTS hourly_rate DECIMAL(10,2) DEFAULT 25.00;
 
 
+
+

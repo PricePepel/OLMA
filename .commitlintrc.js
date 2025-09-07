@@ -18,9 +18,9 @@ module.exports = {
         'revert',   // Revert previous commits
       ],
     ],
-    'type-case': [2, 'always', 'lower'],
+    'type-case': [2, 'always', 'lowercase'],
     'type-empty': [2, 'never'],
-    'subject-case': [2, 'always', 'lower'],
+    'subject-case': [2, 'always', 'sentence-case'],
     'subject-empty': [2, 'never'],
     'subject-full-stop': [2, 'never', '.'],
     'header-max-length': [2, 'always', 72],
@@ -28,6 +28,7 @@ module.exports = {
     'footer-leading-blank': [2, 'always'],
   },
 }
+
 
 
 

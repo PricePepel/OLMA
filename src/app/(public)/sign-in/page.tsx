@@ -29,7 +29,7 @@ export default function SignInPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              "Join the offline learning revolution. Connect with peers, share skills, and grow together in your local community."
+              &ldquo;Join the offline learning revolution. Connect with peers, share skills, and grow together in your local community.&rdquo;
             </p>
             <footer className="text-sm">Sofia Davis, OLMA Community</footer>
           </blockquote>

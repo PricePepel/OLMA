@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     siteName: 'OLMA',
     images: [
       {
-        url: '/og-image.png',
+        url: '/og-image.svg',
         width: 1200,
         height: 630,
         alt: 'OLMA - Peer Learning Network',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'OLMA - Peer Learning Network',
     description: 'Connect, learn, and grow with peers in your community',
-    images: ['/og-image.png'],
+    images: ['/og-image.svg'],
   },
   robots: {
     index: true,
