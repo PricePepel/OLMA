@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
 
     // Send notification to moderators (in a real app, this would be a background job)
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/notifications/send`, {
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://ol-7csck29jz-ibrahimtleukulov-gmailcoms-projects.vercel.app'}/api/notifications/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

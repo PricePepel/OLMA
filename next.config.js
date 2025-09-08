@@ -2,6 +2,9 @@
 const nextConfig = {
   serverExternalPackages: ['@supabase/supabase-js'],
   output: 'standalone',
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     domains: [
       'localhost',

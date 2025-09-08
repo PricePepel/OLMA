@@ -70,7 +70,7 @@ export async function POST(
 
       // Award XP for liking a post
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/gamification/award-xp`, {
+        await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://ol-7csck29jz-ibrahimtleukulov-gmailcoms-projects.vercel.app'}/api/gamification/award-xp`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
