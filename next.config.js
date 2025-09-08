@@ -34,9 +34,6 @@ const nextConfig = {
       }
     ]
   },
-  experimental: {
-    outputFileTracingRoot: undefined,
-  }
 }
 
 module.exports = nextConfig

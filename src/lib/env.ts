@@ -63,7 +63,7 @@ export function getEnvConfig(): EnvConfig {
     .map(([key]) => key)
   
   if (missingVars.length > 0 && !isBuildTime) {
-    throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`)
+    console.warn(`Missing required environment variables: ${missingVars.join(', ')}`)
   }
   
   // Optional variables
