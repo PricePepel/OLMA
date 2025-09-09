@@ -4,6 +4,7 @@ import './globals.css'
 import { AuthProvider } from '@/contexts/auth-context'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from 'sonner'
+import { getSafeAppUrl } from '@/lib/utils'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://ol-7csck29jz-ibrahimtleukulov-gmailcoms-projects.vercel.app'),
+  metadataBase: new URL(getSafeAppUrl()),
   openGraph: {
     title: 'OLMA - Peer Learning Network',
     description: 'Connect, learn, and grow with peers in your community',

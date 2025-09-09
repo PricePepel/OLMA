@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createSuccessResponse, createErrorResponse, errorHandlers } from '@/lib/api-helpers'
 import { ApiErrorCode } from '@/types/api'
+import { getSafeAppUrl } from '@/lib/utils'
 
 export async function POST(
   request: NextRequest,
@@ -70,7 +71,7 @@ export async function POST(
 
       // Award XP for liking a post
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://ol-7csck29jz-ibrahimtleukulov-gmailcoms-projects.vercel.app'}/api/gamification/award-xp`, {
+        await fetch(`${getSafeAppUrl()}/api/gamification/award-xp`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

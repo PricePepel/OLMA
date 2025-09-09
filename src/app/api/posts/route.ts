@@ -12,6 +12,7 @@ import {
 } from '@/lib/api-helpers'
 import { createPostSchema, ApiErrorCode } from '@/types/api'
 import { filterContent } from '@/lib/safety'
+import { getSafeAppUrl } from '@/lib/utils'
 
 export async function GET(request: NextRequest) {
   try {
@@ -180,7 +181,7 @@ export async function POST(request: NextRequest) {
 
     // Award XP for creating a post
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://ol-7csck29jz-ibrahimtleukulov-gmailcoms-projects.vercel.app'}/api/gamification/award-xp`, {
+      await fetch(`${getSafeAppUrl()}/api/gamification/award-xp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

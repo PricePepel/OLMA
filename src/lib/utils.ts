@@ -102,6 +102,18 @@ export function isValidUrl(url: string): boolean {
   }
 }
 
+export function getSafeAppUrl(): string {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL
+  const fallbackUrl = 'https://ol-7csck29jz-ibrahimtleukulov-gmailcoms-projects.vercel.app'
+  
+  // Check if appUrl exists and is a valid URL
+  if (appUrl && appUrl.length > 0 && appUrl.startsWith('http') && isValidUrl(appUrl)) {
+    return appUrl
+  }
+  
+  return fallbackUrl
+}
+
 // Array utilities
 export function chunk<T>(array: T[], size: number): T[][] {
   const chunks: T[][] = []

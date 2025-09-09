@@ -8,6 +8,7 @@ import {
   errorHandlers 
 } from '@/lib/api-helpers'
 import { createReportSchema, ApiErrorCode } from '@/types/api'
+import { getSafeAppUrl } from '@/lib/utils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
 
     // Send notification to moderators (in a real app, this would be a background job)
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://ol-7csck29jz-ibrahimtleukulov-gmailcoms-projects.vercel.app'}/api/notifications/send`, {
+      await fetch(`${getSafeAppUrl()}/api/notifications/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
