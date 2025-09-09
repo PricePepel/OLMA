@@ -54,6 +54,10 @@ export function SkillMatcher() {
     enabled: !!user
   })
 
+  // Debug the API response
+  console.log('userLearningSkillsResponse:', userLearningSkillsResponse)
+  console.log('userLearningSkillsResponse?.data:', userLearningSkillsResponse?.data)
+
   // Extract the userSkills array from the API response
   const userLearningSkills = userLearningSkillsResponse?.data || []
 

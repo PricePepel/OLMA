@@ -28,6 +28,8 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('User skills API response:', userSkills)
+    console.log('User skills count:', userSkills?.length || 0)
+    console.log('User ID:', user.id)
     return createSuccessResponse(userSkills || [])
   } catch (error) {
     console.error('GET /api/user/skills error:', error)
