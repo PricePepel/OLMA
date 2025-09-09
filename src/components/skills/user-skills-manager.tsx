@@ -113,38 +113,38 @@ export function UserSkillsManager() {
     setIsLoadingUserSkills(true)
     try {
       console.log('Fetching user skills for user:', user.id)
-      const response = await fetch(`/api/user-skills?user_id=${user.id}`)
+      const response = await fetch('/api/user/skills')
       console.log('Fetch user skills response status:', response.status)
       
       const data = await response.json()
       console.log('User skills API response:', data)
       
-      if (data.userSkills) {
+      if (data.data) {
         // Log the response to debug any issues
-        console.log('User skills response:', data.userSkills)
-        console.log('Number of user skills:', data.userSkills.length)
+        console.log('User skills response:', data.data)
+        console.log('Number of user skills:', data.data.length)
         
         // Log the first user skill in detail to see its structure
-        if (data.userSkills.length > 0) {
-          console.log('First user skill structure:', JSON.stringify(data.userSkills[0], null, 2))
-          console.log('First user skill skills object:', data.userSkills[0].skills)
-          console.log('First user skill skills.id:', data.userSkills[0].skills?.id)
-          console.log('First user skill skills.name:', data.userSkills[0].skills?.name)
+        if (data.data.length > 0) {
+          console.log('First user skill structure:', JSON.stringify(data.data[0], null, 2))
+          console.log('First user skill skill object:', data.data[0].skill)
+          console.log('First user skill skill.id:', data.data[0].skill?.id)
+          console.log('First user skill skill.name:', data.data[0].skill?.name)
         }
         
         // Filter out any user skills that don't have proper skill data
-        // Note: The API returns 'skills' (plural), not 'skill' (singular)
-        const validUserSkills = data.userSkills.filter((us: any) => 
-          us && us.skills && us.skills.id && us.skills.name
+        // Note: The API returns 'skill' (singular), not 'skills' (plural)
+        const validUserSkills = data.data.filter((us: any) => 
+          us && us.skill && us.skill.id && us.skill.name
         )
         
         console.log('Valid user skills after filtering:', validUserSkills.length)
         
-        if (validUserSkills.length !== data.userSkills.length) {
-          console.warn(`Filtered out ${data.userSkills.length - validUserSkills.length} invalid user skills`)
+        if (validUserSkills.length !== data.data.length) {
+          console.warn(`Filtered out ${data.data.length - validUserSkills.length} invalid user skills`)
           // Log the invalid ones
-          const invalidSkills = data.userSkills.filter((us: any) => 
-            !(us && us.skills && us.skills.id && us.skills.name)
+          const invalidSkills = data.data.filter((us: any) => 
+            !(us && us.skill && us.skill.id && us.skill.name)
           )
           console.log('Invalid user skills:', invalidSkills)
         }

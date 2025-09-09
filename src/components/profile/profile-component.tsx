@@ -190,7 +190,11 @@ export function ProfileComponent() {
             <div className="flex items-center gap-6">
               <div className="relative group">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src={profile.avatar_url || undefined} />
+                  <AvatarImage 
+                    src={profile.avatar_url || undefined}
+                    onError={() => console.log('Profile avatar image failed to load:', profile.avatar_url)}
+                    onLoad={() => console.log('Profile avatar image loaded successfully:', profile.avatar_url)}
+                  />
                   <AvatarFallback className="text-2xl">
                     {profile.full_name.charAt(0)}
                   </AvatarFallback>
@@ -203,7 +207,7 @@ export function ProfileComponent() {
                       onAvatarChange={(url) => {
                         setEditData(prev => ({ ...prev, avatar_url: url }))
                         // Update the profile immediately for better UX
-                        updateProfile({ ...editData, avatar_url: url })
+                        updateProfile({ ...profile, avatar_url: url })
                       }}
                       className="scale-75"
                     />

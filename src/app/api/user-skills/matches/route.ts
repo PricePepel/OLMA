@@ -43,6 +43,9 @@ export async function GET(request: NextRequest) {
         return skill?.id
       })
       .filter(id => id !== undefined)
+    
+    console.log('User learning skills:', userLearningSkills)
+    console.log('Extracted skill IDs:', skillIds)
 
     if (skillIds.length === 0) {
       return NextResponse.json({ matches: [] })
@@ -116,6 +119,8 @@ export async function GET(request: NextRequest) {
       }) || []
 
     console.log(`Found ${matches.length} potential teachers for ${skillIds.length} skills`)
+    console.log('Potential teachers data:', potentialTeachers)
+    console.log('Transformed matches:', matches)
 
     return NextResponse.json({ matches })
   } catch (error) {

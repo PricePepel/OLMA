@@ -50,12 +50,12 @@ export function SkillMatcher() {
 
   // Fetch skills the current user wants to learn
   const { data: userLearningSkillsResponse, isLoading: learningSkillsLoading } = useApi<any>({
-    url: `/api/user-skills?user_id=${user?.id}`,
+    url: '/api/user/skills',
     enabled: !!user
   })
 
   // Extract the userSkills array from the API response
-  const userLearningSkills = userLearningSkillsResponse?.userSkills || []
+  const userLearningSkills = userLearningSkillsResponse?.data || []
 
   // Fetch potential teachers for those skills
   const { data: skillMatchesResponse, isLoading: matchesLoading, refetch: refetchMatches, error: matchesError } = useApi<any>({
@@ -74,20 +74,43 @@ export function SkillMatcher() {
       skillMatches: skillMatches?.length || 0,
       matchesError: matchesError?.message
     })
+    
+    // Debug the structure of userLearningSkills
+    if (userLearningSkills && userLearningSkills.length > 0) {
+      console.log('First userLearningSkill structure:', JSON.stringify(userLearningSkills[0], null, 2))
+      console.log('All userLearningSkills:', userLearningSkills.map((us: any) => ({
+        id: us.id,
+        can_learn: us.can_learn,
+        skill_name: us.skill?.name
+      })))
+    }
   }, [user, userLearningSkills, skillMatches, matchesError])
 
   // Get unique categories from learning skills
   const categories = Array.isArray(userLearningSkills) 
     ? ['all', ...Array.from(new Set(userLearningSkills
-        .filter(us => us.can_learn && us.skills)
-        .map(us => us.skills.category)
+        .filter(us => us.can_learn && us.skill)
+        .map(us => us.skill.category)
       ))]
     : ['all']
 
   // Filter learning skills to only show those the user wants to learn
   const learningSkills = Array.isArray(userLearningSkills) 
-    ? userLearningSkills.filter(us => us.can_learn && us.skills) 
+    ? userLearningSkills.filter(us => {
+        console.log('Filtering userSkill:', us)
+        console.log('can_learn:', us.can_learn, 'has_skill:', !!us.skill)
+        const shouldInclude = us.can_learn && us.skill
+        console.log('Should include:', shouldInclude)
+        return shouldInclude
+      }) 
     : []
+  
+  console.log('Final learningSkills count:', learningSkills.length)
+  console.log('Learning skills details:', learningSkills.map(ls => ({
+    id: ls.id,
+    skill_name: ls.skill?.name,
+    can_learn: ls.can_learn
+  })))
 
   // Filter matches based on search and category
   const filteredMatches = Array.isArray(skillMatches) ? skillMatches.filter(match => {
@@ -221,23 +244,28 @@ export function SkillMatcher() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Find Skill Teachers</h2>
-        <p className="text-muted-foreground">
-          Discover people who can teach the skills you want to learn
-        </p>
-      </div>
 
       {/* Debug Info */}
       {process.env.NODE_ENV === 'development' && (
         <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <h3 className="font-semibold text-blue-800 mb-2">Debug Info:</h3>
           <p className="text-sm text-blue-700">
+            User: {user?.id || 'None'} | 
+            Raw User Skills: {userLearningSkills?.length || 0} | 
             Learning Skills: {learningSkills.length} | 
             Matches Found: {skillMatches?.length || 0} | 
             Error: {matchesError?.message || 'None'}
           </p>
+          <details className="mt-2">
+            <summary className="cursor-pointer text-blue-700">Raw Data</summary>
+            <pre className="text-xs mt-2 bg-white p-2 rounded border overflow-auto max-h-40">
+              {JSON.stringify({
+                userLearningSkills,
+                learningSkills,
+                skillMatches
+              }, null, 2)}
+            </pre>
+          </details>
         </div>
       )}
 
@@ -286,11 +314,14 @@ export function SkillMatcher() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            {Array.isArray(learningSkills) && learningSkills.map((userSkill) => (
-              <Badge key={userSkill.id} variant="secondary">
-                {userSkill.skill?.name || 'Unknown Skill'}
-              </Badge>
-            ))}
+            {Array.isArray(learningSkills) && learningSkills.map((userSkill) => {
+              console.log('Rendering skill badge:', userSkill)
+              return (
+                <Badge key={userSkill.id} variant="secondary">
+                  {userSkill.skill?.name || 'Unknown Skill'}
+                </Badge>
+              )
+            })}
           </div>
         </CardContent>
       </Card>

@@ -307,6 +307,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (!error && data) {
       setProfile(data)
+      // Update cache
+      if (user) {
+        profileCache.set(user.id, { profile: data, timestamp: Date.now() })
+      }
     }
 
     return { error }

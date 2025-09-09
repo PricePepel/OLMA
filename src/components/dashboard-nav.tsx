@@ -17,9 +17,13 @@ import { Bell, Settings, LogOut, User, BookOpen } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 
 export function DashboardNav() {
-  const { user, signOut } = useAuth()
+  const { user, profile, signOut } = useAuth()
   const router = useRouter()
   const [notifications] = useState(3) // Mock notification count
+
+  // Debug logging
+  console.log('DashboardNav - Profile data:', profile)
+  console.log('DashboardNav - User data:', user)
 
   const handleSignOut = async () => {
     await signOut()
@@ -82,9 +86,14 @@ export function DashboardNav() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.user_metadata?.full_name} />
+                    <AvatarImage 
+                      src={profile?.avatar_url || undefined} 
+                      alt={profile?.full_name || 'User'}
+                      onError={() => console.log('Avatar image failed to load:', profile?.avatar_url)}
+                      onLoad={() => console.log('Avatar image loaded successfully:', profile?.avatar_url)}
+                    />
                     <AvatarFallback>
-                      {user?.user_metadata?.full_name ? getUserInitials(user.user_metadata.full_name) : 'U'}
+                      {profile?.full_name ? getUserInitials(profile.full_name) : 'U'}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -93,7 +102,7 @@ export function DashboardNav() {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      {user?.user_metadata?.full_name || 'User'}
+                      {profile?.full_name || 'User'}
                     </p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {user?.email}
