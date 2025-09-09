@@ -59,7 +59,10 @@ export function SkillMatcher() {
   console.log('userLearningSkillsResponse?.data:', userLearningSkillsResponse?.data)
 
   // Extract the userSkills array from the API response
-  const userLearningSkills = userLearningSkillsResponse?.data || []
+  // The API returns the data directly as an array, not wrapped in a data property
+  const userLearningSkills = Array.isArray(userLearningSkillsResponse) 
+    ? userLearningSkillsResponse 
+    : userLearningSkillsResponse?.data || []
 
   // Fetch potential teachers for those skills
   const { data: skillMatchesResponse, isLoading: matchesLoading, refetch: refetchMatches, error: matchesError } = useApi<any>({
