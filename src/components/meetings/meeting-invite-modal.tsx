@@ -47,13 +47,15 @@ export function MeetingInviteModal({
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Fetch user's skills that they can teach
-  const { data: userSkills, isLoading: skillsLoading } = useApi<{userSkills: any[]}>({
-    url: `/api/user-skills?user_id=${user?.id}`,
+  const { data: userSkills, isLoading: skillsLoading } = useApi<any[]>({
+    url: `/api/user/skills`,
     method: 'GET',
     enabled: !!user?.id
   })
 
-  const teachableSkills = userSkills?.userSkills?.filter(skill => skill.can_teach && skill.skills) || []
+  const teachableSkills = Array.isArray(userSkills) 
+    ? userSkills.filter(skill => skill.can_teach && skill.skill) 
+    : []
 
   const handleSubmit = async () => {
     if (!selectedSkill || !meetingLocation || !meetingDate || !meetingTime) {
@@ -135,8 +137,8 @@ export function MeetingInviteModal({
               </SelectTrigger>
               <SelectContent>
                 {teachableSkills.map((userSkill) => (
-                  <SelectItem key={userSkill.skill.id} value={userSkill.skill.id}>
-                    {userSkill.skill.name} (Level {userSkill.proficiency_level})
+                  <SelectItem key={userSkill.skill?.id} value={userSkill.skill?.id}>
+                    {userSkill.skill?.name} (Level {userSkill.proficiency_level})
                   </SelectItem>
                 ))}
               </SelectContent>
