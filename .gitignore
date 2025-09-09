@@ -111,3 +111,6 @@ coverage/
 
 # Husky
 .husky/_
+"tsconfig.tsbuildinfo" 
+tsconfig.tsbuildinfo 
+tsconfig.tsbuildinfo 
