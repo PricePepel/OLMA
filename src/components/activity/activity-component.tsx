@@ -14,13 +14,15 @@ import {
   Building2
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
+import { useApi } from '@/hooks/use-api'
 
 interface ActivityItem {
   id: string
-  type: 'post' | 'event' | 'club' | 'message' | 'achievement'
+  type: string
   title: string
   description: string
   timestamp: string
+  icon: string
   metadata?: {
     club_name?: string
     event_title?: string
@@ -44,50 +46,11 @@ export function ActivityComponent() {
   const { user: _user } = useAuth()
   const [selectedTab, setSelectedTab] = useState('recent')
 
-  // Mock data for now - in a real app, you'd fetch this from API
-  const mockActivity: ActivityItem[] = [
-    {
-      id: '1',
-      type: 'post',
-      title: 'Created a new post',
-      description: 'Shared thoughts about the latest club meeting',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-      metadata: {
-        club_name: 'Tech Enthusiasts'
-      }
-    },
-    {
-      id: '2',
-      type: 'event',
-      title: 'Joined an event',
-      description: 'Registered for the upcoming workshop',
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-      metadata: {
-        event_title: 'Web Development Workshop'
-      }
-    },
-    {
-      id: '3',
-      type: 'club',
-      title: 'Joined a club',
-      description: 'Became a member of a new community',
-      timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
-      metadata: {
-        club_name: 'Photography Club'
-      }
-    },
-    {
-      id: '4',
-      type: 'achievement',
-      title: 'Earned an achievement',
-      description: 'Unlocked a new badge for participation',
-      timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week ago
-      metadata: {
-        achievement_name: 'First Post',
-        points: 50
-      }
-    }
-  ]
+  // Fetch real activity data from API
+  const { data: activities, isLoading: activitiesLoading } = useApi<ActivityItem[]>({
+    url: '/api/dashboard/activity',
+    method: 'GET'
+  })
 
   const mockStats: Stats = {
     total_posts: 12,
@@ -102,6 +65,23 @@ export function ActivityComponent() {
 
   const getActivityIcon = (type: ActivityItem['type']) => {
     switch (type) {
+      case 'message_sent':
+      case 'message_received':
+        return <MessageCircle className="h-4 w-4" />
+      case 'meeting_pending':
+      case 'meeting_accepted':
+      case 'meeting_denied':
+      case 'meeting_started':
+      case 'meeting_completed':
+        return <Calendar className="h-4 w-4" />
+      case 'skill_added':
+        return <Star className="h-4 w-4" />
+      case 'post_created':
+        return <MessageCircle className="h-4 w-4" />
+      case 'club_joined':
+        return <Building2 className="h-4 w-4" />
+      case 'event_attended':
+        return <Calendar className="h-4 w-4" />
       case 'post':
         return <MessageCircle className="h-4 w-4" />
       case 'event':
@@ -119,6 +99,28 @@ export function ActivityComponent() {
 
   const getActivityColor = (type: ActivityItem['type']) => {
     switch (type) {
+      case 'message_sent':
+        return 'bg-blue-100 text-blue-800'
+      case 'message_received':
+        return 'bg-orange-100 text-orange-800'
+      case 'meeting_pending':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'meeting_accepted':
+        return 'bg-green-100 text-green-800'
+      case 'meeting_denied':
+        return 'bg-red-100 text-red-800'
+      case 'meeting_started':
+        return 'bg-blue-100 text-blue-800'
+      case 'meeting_completed':
+        return 'bg-green-100 text-green-800'
+      case 'skill_added':
+        return 'bg-purple-100 text-purple-800'
+      case 'post_created':
+        return 'bg-blue-100 text-blue-800'
+      case 'club_joined':
+        return 'bg-purple-100 text-purple-800'
+      case 'event_attended':
+        return 'bg-green-100 text-green-800'
       case 'post':
         return 'bg-blue-100 text-blue-800'
       case 'event':
@@ -223,7 +225,20 @@ export function ActivityComponent() {
             </TabsList>
 
             <TabsContent value="recent" className="space-y-4">
-              {mockActivity.map((item) => (
+              {activitiesLoading ? (
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex items-start space-x-4 p-4 border rounded-lg animate-pulse">
+                      <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : activities && activities.length > 0 ? (
+                activities.map((item) => (
                 <div key={item.id} className="flex items-start space-x-4 p-4 border rounded-lg">
                   <div className={`p-2 rounded-full ${getActivityColor(item.type)}`}>
                     {getActivityIcon(item.type)}
@@ -263,7 +278,16 @@ export function ActivityComponent() {
                     {formatTimestamp(item.timestamp)}
                   </div>
                 </div>
-              ))}
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No recent activity</h3>
+                  <p className="text-muted-foreground">
+                    Start participating in the community to see your activity here
+                  </p>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="achievements" className="space-y-4">

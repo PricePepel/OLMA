@@ -28,6 +28,7 @@ import {
   Trash2
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { ActivityComponent } from '@/components/activity/activity-component'
 
 interface UserSkill {
   id: string
@@ -445,23 +446,7 @@ export function ProfileComponent() {
         </TabsContent>
 
         <TabsContent value="activity" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>
-                Your recent activity on the platform
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No recent activity</h3>
-                <p className="text-muted-foreground">
-                  Start participating in the community to see your activity here
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <ActivityComponent />
         </TabsContent>
       </Tabs>
     </div>

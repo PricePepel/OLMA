@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { name, description, category, difficultyLevel } = await request.json()
+  const { name, description, category } = await request.json()
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -61,7 +61,6 @@ export async function POST(request: NextRequest) {
       name,
       description,
       category,
-      difficulty_level: difficultyLevel,
     })
     .select()
     .single()

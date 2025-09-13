@@ -16,6 +16,26 @@ export async function GET(request: NextRequest) {
 
     console.log('Offers API - User ID:', user.id, 'Status filter:', status)
 
+    // First, check for and expire any outdated pending offers
+    try {
+      const now = new Date().toISOString()
+      const { error: expireError } = await supabase
+        .from('meeting_invitations')
+        .update({ 
+          status: 'denied',
+          updated_at: now
+        })
+        .eq('status', 'pending')
+        .lt('meeting_date', now)
+        .or(`inviter_id.eq.${user.id},invitee_id.eq.${user.id}`)
+
+      if (expireError) {
+        console.warn('Failed to expire outdated offers:', expireError)
+      }
+    } catch (expireError) {
+      console.warn('Error during offer expiration check:', expireError)
+    }
+
     let query = supabase
       .from('meeting_invitations')
       .select(`

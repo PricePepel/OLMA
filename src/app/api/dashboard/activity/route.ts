@@ -19,6 +19,12 @@ export async function GET(request: NextRequest) {
       description: string;
       timestamp: string;
       icon: string;
+      metadata?: {
+        club_name?: string;
+        event_title?: string;
+        achievement_name?: string;
+        points?: number;
+      };
     }> = []
 
     // Get recent messages
@@ -155,6 +161,111 @@ export async function GET(request: NextRequest) {
           description: `Added ${skillData?.name || 'Unknown skill'} for ${action} (Level ${skill.proficiency_level})`,
           timestamp: skill.created_at,
           icon: 'book'
+        })
+      })
+    }
+
+    // Get recent posts
+    const { data: recentPosts, error: postsError } = await supabase
+      .from('posts')
+      .select(`
+        id,
+        content,
+        created_at,
+        club_id,
+        clubs (
+          name
+        )
+      `)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(5)
+
+    if (!postsError && recentPosts) {
+      recentPosts.forEach(post => {
+        const clubData = Array.isArray(post.clubs) ? post.clubs[0] : post.clubs
+        const clubName = clubData?.name || 'General'
+        const contentPreview = post.content.length > 100 
+          ? post.content.substring(0, 100) + '...' 
+          : post.content
+
+        activities.push({
+          id: `post-${post.id}`,
+          type: 'post_created',
+          title: 'Post created',
+          description: contentPreview,
+          timestamp: post.created_at,
+          icon: 'message',
+          metadata: {
+            club_name: clubName
+          }
+        })
+      })
+    }
+
+    // Get recent club memberships
+    const { data: recentClubs, error: clubsError } = await supabase
+      .from('club_members')
+      .select(`
+        id,
+        role,
+        joined_at,
+        clubs (
+          name
+        )
+      `)
+      .eq('user_id', user.id)
+      .order('joined_at', { ascending: false })
+      .limit(5)
+
+    if (!clubsError && recentClubs) {
+      recentClubs.forEach(membership => {
+        const clubData = Array.isArray(membership.clubs) ? membership.clubs[0] : membership.clubs
+        
+        activities.push({
+          id: `club-${membership.id}`,
+          type: 'club_joined',
+          title: 'Joined club',
+          description: `Became a ${membership.role} of ${clubData?.name || 'Unknown club'}`,
+          timestamp: membership.joined_at,
+          icon: 'building',
+          metadata: {
+            club_name: clubData?.name
+          }
+        })
+      })
+    }
+
+    // Get recent event attendance
+    const { data: recentEvents, error: eventsError } = await supabase
+      .from('event_attendees')
+      .select(`
+        id,
+        status,
+        created_at,
+        events (
+          title,
+          start_time
+        )
+      `)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(5)
+
+    if (!eventsError && recentEvents) {
+      recentEvents.forEach(attendance => {
+        const eventData = Array.isArray(attendance.events) ? attendance.events[0] : attendance.events
+        
+        activities.push({
+          id: `event-${attendance.id}`,
+          type: 'event_attended',
+          title: 'Event attendance',
+          description: `${attendance.status} attendance for ${eventData?.title || 'Unknown event'}`,
+          timestamp: attendance.created_at,
+          icon: 'calendar',
+          metadata: {
+            event_title: eventData?.title
+          }
         })
       })
     }

@@ -16,10 +16,41 @@ import {
   GraduationCap, 
   Star,
   Search,
-  Filter
+  Filter,
+  Code, 
+  Languages, 
+  Palette, 
+  Briefcase, 
+  Heart, 
+  Utensils,
+  Calculator,
+  Cpu,
+  Globe,
+  Music,
+  MessageSquare,
+  Building,
+  Dumbbell,
+  Coffee
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/auth-context'
+
+const categoryIcons: Record<string, any> = {
+  'Academic Sciences': Calculator,
+  'IT & Digital Skills': Cpu,
+  'Languages': Languages,
+  'Creativity & Arts': Palette,
+  'Soft Skills': MessageSquare,
+  'Careers & Professions': Building,
+  'Sports & Health': Dumbbell,
+  'Hobbies & Everyday Skills': Coffee,
+  // Legacy categories for backward compatibility
+  'Programming': Code,
+  'Arts': Palette,
+  'Business': Briefcase,
+  'Fitness': Heart,
+  'Life Skills': Utensils,
+}
 
 interface Skill {
   id: string
@@ -75,6 +106,11 @@ export function UserSkillsManager() {
       setUserSkills([])
     }
   }, [user])
+
+  const getCategoryIcon = (category: string) => {
+    const IconComponent = categoryIcons[category] || BookOpen
+    return <IconComponent className="h-5 w-5" />
+  }
 
   // Don't render if no user
   if (!user) {

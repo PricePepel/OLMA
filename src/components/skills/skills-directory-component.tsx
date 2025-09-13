@@ -18,7 +18,18 @@ import {
   BookOpen,
   GraduationCap,
   Star,
-  MapPin
+  MapPin,
+  Calculator,
+  Cpu,
+  Globe,
+  Music,
+  MessageSquare,
+  Building,
+  Dumbbell,
+  Coffee,
+  Zap,
+  Camera,
+  Gamepad2
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -49,8 +60,16 @@ interface UserSkill {
 }
 
 const categoryIcons: Record<string, any> = {
-  'Programming': Code,
+  'Academic Sciences': Calculator,
+  'IT & Digital Skills': Cpu,
   'Languages': Languages,
+  'Creativity & Arts': Palette,
+  'Soft Skills': MessageSquare,
+  'Careers & Professions': Building,
+  'Sports & Health': Dumbbell,
+  'Hobbies & Everyday Skills': Coffee,
+  // Legacy categories for backward compatibility
+  'Programming': Code,
   'Arts': Palette,
   'Business': Briefcase,
   'Fitness': Heart,

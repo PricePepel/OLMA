@@ -26,7 +26,6 @@ interface SkillOffer {
     name: string
     description: string
     category: string
-    difficulty_level: number
   }
   profiles: {
     id: string

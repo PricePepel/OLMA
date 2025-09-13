@@ -17,7 +17,13 @@ import {
   Heart,
   Utensils,
   Calculator,
-  BookOpenCheck
+  BookOpenCheck,
+  Cpu,
+  Music,
+  MessageSquare,
+  Building,
+  Dumbbell,
+  Coffee
 } from 'lucide-react'
 
 export default function HomePage() {
@@ -227,14 +233,14 @@ export default function HomePage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {[
-              { icon: Code, name: 'Programming', color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/20' },
+              { icon: Calculator, name: 'Academic Sciences', color: 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/20' },
+              { icon: Cpu, name: 'IT & Digital Skills', color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/20' },
               { icon: Languages, name: 'Languages', color: 'bg-green-100 text-green-600 dark:bg-green-900/20' },
-              { icon: Palette, name: 'Arts', color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/20' },
-              { icon: Briefcase, name: 'Business', color: 'bg-gray-100 text-gray-600 dark:bg-gray-900/20' },
-              { icon: Heart, name: 'Fitness', color: 'bg-red-100 text-red-600 dark:bg-red-900/20' },
-              { icon: Utensils, name: 'Cooking', color: 'bg-orange-100 text-orange-600 dark:bg-orange-900/20' },
-              { icon: Calculator, name: 'Academic', color: 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/20' },
-              { icon: BookOpenCheck, name: 'Life Skills', color: 'bg-teal-100 text-teal-600 dark:bg-teal-900/20' },
+              { icon: Palette, name: 'Creativity & Arts', color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/20' },
+              { icon: MessageSquare, name: 'Soft Skills', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20' },
+              { icon: Building, name: 'Careers & Professions', color: 'bg-gray-100 text-gray-600 dark:bg-gray-900/20' },
+              { icon: Dumbbell, name: 'Sports & Health', color: 'bg-red-100 text-red-600 dark:bg-red-900/20' },
+              { icon: Coffee, name: 'Hobbies & Everyday Skills', color: 'bg-orange-100 text-orange-600 dark:bg-orange-900/20' },
             ].map((category) => (
               <div key={category.name} className="text-center">
                 <div className={`w-16 h-16 rounded-lg ${category.color} flex items-center justify-center mx-auto mb-3`}>

@@ -28,7 +28,6 @@ export const skillSchema = z.object({
   name: z.string().min(2, 'Skill name must be at least 2 characters').max(50, 'Skill name must be less than 50 characters'),
   description: z.string().max(500, 'Description must be less than 500 characters').optional(),
   category: z.string().min(2, 'Category must be at least 2 characters').max(50, 'Category must be less than 50 characters'),
-  difficultyLevel: z.number().min(1).max(5, 'Difficulty level must be between 1 and 5'),
 })
 
 // Skill offer schemas
