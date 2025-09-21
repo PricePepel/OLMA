@@ -13,6 +13,10 @@ export async function GET(request: NextRequest) {
       return createErrorResponse(ApiErrorCode.UNAUTHORIZED, 'Authentication required')
     }
 
+    // Get user_id from query params (for getting other user's skills)
+    const url = new URL(request.url)
+    const targetUserId = url.searchParams.get('user_id') || user.id
+
     // Fetch user skills with skill details
     const { data: userSkills, error } = await supabase
       .from('user_skills')
@@ -20,7 +24,7 @@ export async function GET(request: NextRequest) {
         *,
         skill:skills(*)
       `)
-      .eq('user_id', user.id)
+      .eq('user_id', targetUserId)
 
     if (error) {
       console.error('Error fetching user skills:', error)
@@ -29,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     console.log('User skills API response:', userSkills)
     console.log('User skills count:', userSkills?.length || 0)
-    console.log('User ID:', user.id)
+    console.log('Target User ID:', targetUserId)
     return createSuccessResponse(userSkills || [])
   } catch (error) {
     console.error('GET /api/user/skills error:', error)

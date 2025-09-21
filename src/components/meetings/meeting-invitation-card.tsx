@@ -186,11 +186,11 @@ export function MeetingInvitationCard({ meeting, onStatusChange }: MeetingInvita
             <div className="space-y-1 text-sm">
               <div className="flex items-center gap-2">
                 <span className="font-medium">{isInviter ? 'You teach:' : `${meeting.inviter.full_name} teaches:`}</span>
-                <span className="text-blue-700 dark:text-blue-300">{meeting.inviter_skill.name}</span>
+                <span className="text-blue-700 dark:text-blue-300">{meeting.inviter_skill?.name || 'Unknown Skill'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-medium">{isInviter ? `${meeting.invitee.full_name} teaches:` : 'You learn:'}</span>
-                <span className="text-blue-700 dark:text-blue-300">{meeting.invitee_skill.name}</span>
+                <span className="text-blue-700 dark:text-blue-300">{meeting.invitee_skill?.name || 'Unknown Skill'}</span>
               </div>
             </div>
           </div>

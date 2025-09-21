@@ -479,7 +479,7 @@ export function ProfileComponent() {
                         <div className="mb-3 p-3 bg-muted rounded-lg">
                           <p className="text-sm">
                             <span className="font-medium">Skills exchanged:</span>{' '}
-                            {rating.meeting.inviter_skill?.name} ↔ {rating.meeting.invitee_skill?.name}
+                            {rating.meeting.inviter_skill?.name || 'Unknown'} ↔ {rating.meeting.invitee_skill?.name || 'Unknown'}
                           </p>
                         </div>
                       )}
