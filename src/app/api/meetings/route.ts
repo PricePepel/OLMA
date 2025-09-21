@@ -18,7 +18,12 @@ export async function GET(request: NextRequest) {
       .from('meeting_invitations')
       .select(`
         *,
-        skill:skills (
+        inviter_skill:skills!meeting_invitations_inviter_skill_id_fkey (
+          id,
+          name,
+          category
+        ),
+        invitee_skill:skills!meeting_invitations_invitee_skill_id_fkey (
           id,
           name,
           category
@@ -71,7 +76,8 @@ export async function POST(request: NextRequest) {
     const {
       conversation_id,
       invitee_id,
-      skill_id,
+      inviter_skill_id,
+      invitee_skill_id,
       meeting_location,
       meeting_date,
       meeting_duration = 60,
@@ -79,7 +85,7 @@ export async function POST(request: NextRequest) {
     } = body
 
     // Validate required fields
-    if (!conversation_id || !invitee_id || !skill_id || !meeting_location || !meeting_date) {
+    if (!conversation_id || !invitee_id || !inviter_skill_id || !invitee_skill_id || !meeting_location || !meeting_date) {
       return createErrorResponse(ApiErrorCode.VALIDATION_ERROR, 'Missing required fields')
     }
 
@@ -111,7 +117,8 @@ export async function POST(request: NextRequest) {
         conversation_id,
         inviter_id: user.id,
         invitee_id,
-        skill_id,
+        inviter_skill_id,
+        invitee_skill_id,
         meeting_location,
         meeting_date,
         meeting_duration,
@@ -120,7 +127,12 @@ export async function POST(request: NextRequest) {
       })
       .select(`
         *,
-        skill:skills (
+        inviter_skill:skills!meeting_invitations_inviter_skill_id_fkey (
+          id,
+          name,
+          category
+        ),
+        invitee_skill:skills!meeting_invitations_invitee_skill_id_fkey (
           id,
           name,
           category
@@ -156,6 +168,7 @@ export async function POST(request: NextRequest) {
     return errorHandlers.internalError(error)
   }
 }
+
 
 
 

@@ -38,7 +38,8 @@ export function MeetingInviteModal({
   onInviteSent
 }: MeetingInviteModalProps) {
   const { user } = useAuth()
-  const [selectedSkill, setSelectedSkill] = useState<string>('')
+  const [inviterSkillId, setInviterSkillId] = useState<string>('')
+  const [inviteeSkillId, setInviteeSkillId] = useState<string>('')
   const [meetingLocation, setMeetingLocation] = useState('')
   const [meetingDate, setMeetingDate] = useState<Date | undefined>(new Date())
   const [meetingTime, setMeetingTime] = useState('')
@@ -53,12 +54,23 @@ export function MeetingInviteModal({
     enabled: !!user?.id
   })
 
+  // Fetch other user's skills that they can teach
+  const { data: otherUserSkills, isLoading: otherSkillsLoading } = useApi<any[]>({
+    url: `/api/user/skills?user_id=${otherUserId}`,
+    method: 'GET',
+    enabled: !!otherUserId
+  })
+
   const teachableSkills = Array.isArray(userSkills) 
     ? userSkills.filter(skill => skill.can_teach && skill.skill) 
     : []
 
+  const otherTeachableSkills = Array.isArray(otherUserSkills) 
+    ? otherUserSkills.filter(skill => skill.can_teach && skill.skill) 
+    : []
+
   const handleSubmit = async () => {
-    if (!selectedSkill || !meetingLocation || !meetingDate || !meetingTime) {
+    if (!inviterSkillId || !inviteeSkillId || !meetingLocation || !meetingDate || !meetingTime) {
       toast.error('Please fill in all required fields')
       return
     }
@@ -78,7 +90,8 @@ export function MeetingInviteModal({
         body: JSON.stringify({
           conversation_id: conversationId,
           invitee_id: otherUserId,
-          skill_id: selectedSkill,
+          inviter_skill_id: inviterSkillId,
+          invitee_skill_id: inviteeSkillId,
           meeting_location: meetingLocation,
           meeting_date: meetingDateTime.toISOString(),
           meeting_duration: parseInt(meetingDuration),
@@ -96,7 +109,8 @@ export function MeetingInviteModal({
       onClose()
       
       // Reset form
-      setSelectedSkill('')
+      setInviterSkillId('')
+      setInviteeSkillId('')
       setMeetingLocation('')
       setMeetingDate(undefined)
       setMeetingTime('')
@@ -128,10 +142,22 @@ export function MeetingInviteModal({
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Skill Selection */}
+          {/* 50/50 Skill Exchange Header */}
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="h-5 w-5 text-blue-600" />
+              <h3 className="font-medium text-blue-800 dark:text-blue-200">50/50 Skill Exchange</h3>
+            </div>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              Both participants will teach each other their skills during this meeting. 
+              You'll earn 1 coin per minute of the meeting!
+            </p>
+          </div>
+
+          {/* Inviter Skill Selection */}
           <div className="space-y-2">
-            <Label htmlFor="skill">Skill to Share *</Label>
-            <Select value={selectedSkill} onValueChange={setSelectedSkill}>
+            <Label htmlFor="inviter-skill">Your Skill to Teach *</Label>
+            <Select value={inviterSkillId} onValueChange={setInviterSkillId}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a skill you want to teach" />
               </SelectTrigger>
@@ -143,7 +169,25 @@ export function MeetingInviteModal({
                 ))}
               </SelectContent>
             </Select>
-            {skillsLoading && <p className="text-sm text-muted-foreground">Loading skills...</p>}
+            {skillsLoading && <p className="text-sm text-muted-foreground">Loading your skills...</p>}
+          </div>
+
+          {/* Invitee Skill Selection */}
+          <div className="space-y-2">
+            <Label htmlFor="invitee-skill">{otherUserName}'s Skill to Teach *</Label>
+            <Select value={inviteeSkillId} onValueChange={setInviteeSkillId}>
+              <SelectTrigger>
+                <SelectValue placeholder={`Select a skill ${otherUserName} will teach you`} />
+              </SelectTrigger>
+              <SelectContent>
+                {otherTeachableSkills.map((userSkill) => (
+                  <SelectItem key={userSkill.skill?.id} value={userSkill.skill?.id}>
+                    {userSkill.skill?.name} (Level {userSkill.proficiency_level})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {otherSkillsLoading && <p className="text-sm text-muted-foreground">Loading {otherUserName}'s skills...</p>}
           </div>
 
           {/* Meeting Location */}

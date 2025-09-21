@@ -56,3 +56,4 @@ CREATE POLICY "Users can delete their meeting invitations" ON meeting_invitation
 
 
 
+

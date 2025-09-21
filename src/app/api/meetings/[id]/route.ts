@@ -17,7 +17,7 @@ export async function PATCH(
     const { user, supabase } = await getAuthenticatedUser()
     const { id } = await params
 
-    const { status, invitee_response } = body
+    const { status, invitee_response, actual_duration } = body
 
     // Validate status
     const validStatuses = ['accepted', 'denied', 'started', 'completed', 'cancelled']
@@ -56,13 +56,22 @@ export async function PATCH(
       updateData.invitee_response = invitee_response
     }
 
+    if (actual_duration && status === 'completed') {
+      updateData.actual_duration = actual_duration
+    }
+
     const { data: updatedMeeting, error: updateError } = await supabase
       .from('meeting_invitations')
       .update(updateData)
       .eq('id', id)
       .select(`
         *,
-        skill:skills (
+        inviter_skill:skills!meeting_invitations_inviter_skill_id_fkey (
+          id,
+          name,
+          category
+        ),
+        invitee_skill:skills!meeting_invitations_invitee_skill_id_fkey (
           id,
           name,
           category
@@ -145,6 +154,7 @@ export async function DELETE(
     return errorHandlers.internalError(error)
   }
 }
+
 
 
 

@@ -29,6 +29,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ActivityComponent } from '@/components/activity/activity-component'
+import { format } from 'date-fns'
 
 interface UserSkill {
   id: string
@@ -63,6 +64,25 @@ export function ProfileComponent() {
   // Fetch available skills for adding
   const { data: availableSkills } = useApi<Skill[]>({
     url: '/api/skills',
+    enabled: !!userId
+  })
+
+  // Fetch user ratings
+  const { data: ratingData, isLoading: ratingsLoading } = useApi<{
+    averageRating: number
+    totalRatings: number
+    recentRatings: any[]
+  }>({
+    url: '/api/user/ratings',
+    enabled: !!userId
+  })
+
+  // Fetch user badges
+  const { data: userBadges, isLoading: badgesLoading } = useApi<{
+    badges: any[]
+    equipped: any[]
+  }>({
+    url: '/api/user/badges',
     enabled: !!userId
   })
 
@@ -219,6 +239,15 @@ export function ProfileComponent() {
                 <div className="flex items-center gap-2">
                   <h2 className="text-2xl font-bold">{profile.full_name}</h2>
                   <Badge variant="secondary">@{profile.username}</Badge>
+                  {userBadges?.equipped && userBadges.equipped.length > 0 && (
+                    <div className="flex items-center gap-1">
+                      {userBadges.equipped.map((badge: any) => (
+                        <Badge key={badge.badge_id} variant="outline" className="text-xs">
+                          {badge.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 {profile.bio && (
                   <p className="text-muted-foreground max-w-md">{profile.bio}</p>
@@ -250,7 +279,7 @@ export function ProfileComponent() {
       </Card>
 
       {/* Profile Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="flex items-center gap-3 p-4">
             <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
@@ -259,6 +288,22 @@ export function ProfileComponent() {
             <div>
               <p className="text-2xl font-bold">{profile.level || 1}</p>
               <p className="text-sm text-muted-foreground">Level</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="flex items-center gap-3 p-4">
+            <div className="p-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
+              <Star className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">
+                {ratingsLoading ? '...' : (ratingData?.averageRating || 0).toFixed(1)}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Rating ({ratingData?.totalRatings || 0})
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -302,8 +347,9 @@ export function ProfileComponent() {
 
       {/* Profile Content */}
       <Tabs defaultValue="skills" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="skills">Skills</TabsTrigger>
+          <TabsTrigger value="reviews">Reviews</TabsTrigger>
           <TabsTrigger value="edit">Edit Profile</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
         </TabsList>
@@ -368,6 +414,90 @@ export function ProfileComponent() {
                   <h3 className="text-lg font-semibold mb-2">No skills yet</h3>
                   <p className="text-muted-foreground mb-4">
                     Add skills you can teach or want to learn
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="reviews" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Meeting Reviews</CardTitle>
+              <CardDescription>
+                Recent feedback from your skill exchange meetings
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {ratingsLoading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex items-center gap-3 p-4 border rounded-lg">
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-48" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : ratingData?.recentRatings && ratingData.recentRatings.length > 0 ? (
+                <div className="space-y-4">
+                  {ratingData.recentRatings.map((rating: any) => (
+                    <div key={rating.id} className="p-4 border rounded-lg">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={rating.rater.avatar_url} />
+                            <AvatarFallback>
+                              {rating.rater.full_name.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h4 className="font-medium">{rating.rater.full_name}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {format(new Date(rating.created_at), 'MMM dd, yyyy')}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`h-4 w-4 ${
+                                star <= rating.rating
+                                  ? 'fill-yellow-400 text-yellow-400'
+                                  : 'text-gray-300'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {rating.meeting && (
+                        <div className="mb-3 p-3 bg-muted rounded-lg">
+                          <p className="text-sm">
+                            <span className="font-medium">Skills exchanged:</span>{' '}
+                            {rating.meeting.inviter_skill?.name} ↔ {rating.meeting.invitee_skill?.name}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {rating.comment && (
+                        <p className="text-sm text-muted-foreground italic">
+                          "{rating.comment}"
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Star className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No reviews yet</h3>
+                  <p className="text-muted-foreground">
+                    Complete skill exchange meetings to receive reviews
                   </p>
                 </div>
               )}

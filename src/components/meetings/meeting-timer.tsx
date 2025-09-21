@@ -11,7 +11,7 @@ interface MeetingTimerProps {
   meetingId: string
   startTime: string
   duration: number // in minutes
-  onEndMeeting: () => void
+  onEndMeeting: (actualDuration: number) => void
   isActive: boolean
 }
 
@@ -129,7 +129,7 @@ export function MeetingTimer({
         {/* Action Button */}
         <div className="pt-2">
           <Button
-            onClick={onEndMeeting}
+            onClick={() => onEndMeeting(Math.ceil(elapsedTime / 60))}
             className="w-full"
             variant="destructive"
           >
@@ -150,6 +150,7 @@ export function MeetingTimer({
     </Card>
   )
 }
+
 
 
 

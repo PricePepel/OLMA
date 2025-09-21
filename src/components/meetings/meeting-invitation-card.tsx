@@ -26,16 +26,24 @@ interface MeetingInvitation {
   conversation_id: string
   inviter_id: string
   invitee_id: string
-  skill_id: string
+  inviter_skill_id: string
+  invitee_skill_id: string
   meeting_location: string
   meeting_date: string
   meeting_duration: number
+  actual_duration?: number
+  coins_earned?: number
   status: 'pending' | 'accepted' | 'denied' | 'started' | 'completed' | 'cancelled'
   inviter_message?: string
   invitee_response?: string
   created_at: string
   updated_at: string
-  skill: {
+  inviter_skill: {
+    id: string
+    name: string
+    category: string
+  }
+  invitee_skill: {
     id: string
     name: string
     category: string
@@ -92,7 +100,7 @@ export function MeetingInvitationCard({ meeting, onStatusChange }: MeetingInvita
     }
   }
 
-  const handleStatusChange = async (newStatus: string, inviteeResponse?: string) => {
+  const handleStatusChange = async (newStatus: string, inviteeResponse?: string, actualDuration?: number) => {
     setIsLoading(true)
     try {
       const response = await fetch(`/api/meetings/${meeting.id}`, {
@@ -102,7 +110,8 @@ export function MeetingInvitationCard({ meeting, onStatusChange }: MeetingInvita
         },
         body: JSON.stringify({
           status: newStatus,
-          invitee_response: inviteeResponse
+          invitee_response: inviteeResponse,
+          actual_duration: actualDuration
         }),
       })
 
@@ -144,7 +153,7 @@ export function MeetingInvitationCard({ meeting, onStatusChange }: MeetingInvita
         meetingId={meeting.id}
         startTime={meeting.updated_at} // Use updated_at as start time when status changed to 'started'
         duration={meeting.meeting_duration}
-        onEndMeeting={() => handleStatusChange('completed')}
+        onEndMeeting={(actualDuration) => handleStatusChange('completed', undefined, actualDuration)}
         isActive={true}
       />
     )
@@ -168,10 +177,22 @@ export function MeetingInvitationCard({ meeting, onStatusChange }: MeetingInvita
       <CardContent className="space-y-4">
         {/* Meeting Details */}
         <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium">{meeting.skill.name}</span>
-            <span className="text-muted-foreground">with {otherUser.full_name}</span>
+          {/* Skill Exchange Info */}
+          <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="h-4 w-4 text-blue-600" />
+              <span className="font-medium text-blue-800 dark:text-blue-200">50/50 Skill Exchange</span>
+            </div>
+            <div className="space-y-1 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{isInviter ? 'You teach:' : `${meeting.inviter.full_name} teaches:`}</span>
+                <span className="text-blue-700 dark:text-blue-300">{meeting.inviter_skill.name}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{isInviter ? `${meeting.invitee.full_name} teaches:` : 'You learn:'}</span>
+                <span className="text-blue-700 dark:text-blue-300">{meeting.invitee_skill.name}</span>
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 text-sm">
@@ -192,6 +213,11 @@ export function MeetingInvitationCard({ meeting, onStatusChange }: MeetingInvita
           <div className="flex items-center gap-2 text-sm">
             <Clock className="h-4 w-4 text-muted-foreground" />
             <span>{meeting.meeting_duration} minutes</span>
+            {meeting.coins_earned && meeting.coins_earned > 0 && (
+              <span className="ml-2 px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 rounded-full text-xs font-medium">
+                🪙 {meeting.coins_earned} coins earned
+              </span>
+            )}
           </div>
         </div>
 

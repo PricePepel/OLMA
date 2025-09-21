@@ -22,6 +22,7 @@ import {
 import { toast } from 'sonner'
 import { useApi } from '@/hooks/use-api'
 import { formatCurrency } from '@/lib/gamification'
+import { BadgesShop } from './badges-shop'
 
 interface ShopItem {
   id: string
@@ -242,11 +243,12 @@ export function ShopComponent({ className }: ShopComponentProps) {
 
       {/* Shop Items */}
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="all">All Items</TabsTrigger>
           <TabsTrigger value="profile_frames">Frames</TabsTrigger>
           <TabsTrigger value="badges">Badges</TabsTrigger>
           <TabsTrigger value="backgrounds">Backgrounds</TabsTrigger>
+          <TabsTrigger value="profile_badges">Profile Badges</TabsTrigger>
         </TabsList>
 
         {Object.entries(filteredItems).map(([category, categoryItems]) => (
@@ -427,6 +429,11 @@ export function ShopComponent({ className }: ShopComponentProps) {
             )}
           </TabsContent>
         ))}
+
+        {/* Profile Badges Tab */}
+        <TabsContent value="profile_badges" className="mt-6">
+          <BadgesShop />
+        </TabsContent>
       </Tabs>
     </div>
   )

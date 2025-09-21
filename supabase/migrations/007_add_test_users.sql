@@ -54,3 +54,4 @@ INSERT INTO user_skills (id, user_id, skill_id, proficiency_level, can_teach, ca
 
 
 
+
