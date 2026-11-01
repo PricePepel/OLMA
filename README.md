@@ -1,6 +1,8 @@
 # OLMA - Peer Learning Network
 
-OLMA is a modern peer-to-peer learning platform that connects learners worldwide through skill exchange, learning clubs, events, and gamified experiences.
+A peer-to-peer learning platform: skill exchange, learning clubs, events, and gamified rankings. I founded it and shipped it end to end in 4 months. It was implemented at School No. 166, where it's still in use by 300 active users, and Bloomin incorporated its coach-to-student relationship code.
+
+**Live:** [olma-tau.vercel.app](https://olma-tau.vercel.app)
 
 ## 🚀 Features
 
@@ -39,8 +41,8 @@ OLMA is a modern peer-to-peer learning platform that connects learners worldwide
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/olma-mvp.git
-cd olma-mvp
+git clone https://github.com/PricePepel/OLMA.git
+cd OLMA
 ```
 
 ### 2. Install dependencies
@@ -282,7 +284,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🆘 Support
 
 - **Documentation**: [docs.olma.com](https://docs.olma.com)
-- **Issues**: [GitHub Issues](https://github.com/your-username/olma-mvp/issues)
+- **Issues**: [GitHub Issues](https://github.com/PricePepel/OLMA/issues)
 - **Discord**: [Join our community](https://discord.gg/olma)
 - **Email**: support@olma.com
 
