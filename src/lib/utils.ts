@@ -54,7 +54,7 @@ export function formatRelativeTime(date: string | Date) {
 // String utilities
 export function truncateText(text: string, maxLength: number) {
   if (text.length <= maxLength) return text
-  return text.slice(0, maxLength) + '...'
+  return text.slice(0, maxLength).trimEnd() + '...'
 }
 
 export function capitalizeFirst(str: string) {

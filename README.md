@@ -1,5 +1,7 @@
 # OLMA - Peer Learning Network
 
+[![CI](https://github.com/PricePepel/OLMA/actions/workflows/ci.yml/badge.svg)](https://github.com/PricePepel/OLMA/actions/workflows/ci.yml)
+
 A peer-to-peer learning platform: skill exchange, learning clubs, events, and gamified rankings. I founded it and shipped it end to end in 4 months. It was implemented at School No. 166, where it's still in use by 300 active users, and Bloomin incorporated its coach-to-student relationship code.
 
 **Live:** [olma-tau.vercel.app](https://olma-tau.vercel.app)
@@ -31,7 +33,7 @@ A peer-to-peer learning platform: skill exchange, learning clubs, events, and ga
 
 ## 📋 Prerequisites
 
-- Node.js 18+ 
+- Node.js 20+ 
 - npm or yarn
 - Supabase account
 - Git
@@ -171,6 +173,20 @@ npm run test:e2e
 # Run E2E tests with UI
 npm run test:e2e:ui
 ```
+
+CI runs lint, type checking, unit tests, a production build and `e2e/smoke.spec.ts` on every push. The smoke test needs no Supabase project. `e2e/signup-flow.spec.ts` does, so it only runs locally.
+
+## 🧭 Design notes
+
+**Both people teach.** A meeting invitation stores a skill from each side (`inviter_skill_id` and `invitee_skill_id`), so a meeting is a two-way exchange rather than a lesson one person buys from another.
+
+**Coins are awarded in the database.** A Postgres trigger pays out when a meeting's status changes to `completed`, at 1 coin per minute of actual duration, falling back to the planned duration. Any code path that completes a meeting pays the same way. See `database/update_meeting_system_50_50.sql`.
+
+**Known limits:**
+
+- The content rate limiter is an in-memory `Map`, so on serverless hosting it applies per instance, not across the whole deployment. Making it hold everywhere needs a shared store such as Postgres or Redis.
+- `supabase/migrations/` has overlapping history from the MVP. `006_complete_schema_fix.sql` is the one to apply to a new project, and one-off scripts are in `database/`.
+- The E2E smoke test covers public pages, not flows that need a live Supabase project.
 
 ## 🏗 Building for Production
 

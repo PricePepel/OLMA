@@ -15,8 +15,9 @@ npx next lint --max-warnings 1000
 echo "Running type checking..."
 npx tsc --noEmit
 
-# Skip unit tests for now (Jest config issues)
-echo "Skipping unit tests due to Jest configuration issues..."
+# Run unit tests
+echo "Running unit tests..."
+npm test -- --ci
 
 # Skip E2E tests in pre-commit to avoid long delays
 echo "Skipping E2E tests in pre-commit hook (run 'npm run test:e2e' manually if needed)"
