@@ -253,7 +253,8 @@ npm run lint:fix
 |----------|-------------|----------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | Yes |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon key | Yes |
-| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service role key | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service role key (server only; the offer-expiry cron needs it) | Yes |
+| `CRON_SECRET` | Random string, 16+ characters. Vercel sends it to the cron in `vercel.json` | Yes, on Vercel |
 | `NEXT_PUBLIC_APP_URL` | Your app's public URL | Yes |
 | `NEXTAUTH_SECRET` | Secret for NextAuth | Yes |
 | `NEXTAUTH_URL` | Your app's URL for NextAuth | Yes |
