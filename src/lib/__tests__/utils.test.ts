@@ -16,7 +16,7 @@ import {
 describe('Utility Functions', () => {
   describe('Date formatting', () => {
     it('should format date correctly', () => {
-      const date = new Date('2024-01-15')
+      const date = new Date(2024, 0, 15)
       const formatted = formatDate(date)
       expect(formatted).toMatch(/Jan 15, 2024/)
     })

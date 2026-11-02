@@ -95,7 +95,7 @@ describe('Safety Utilities', () => {
     })
 
     it('should block rapid posting', () => {
-      const userId = 'user123'
+      const userId = 'user456'
       
       // First post should be allowed
       const firstResult = checkContentCreationRateLimit(userId)

@@ -11,7 +11,7 @@ describe('Gamification System', () => {
   describe('calculateLevel', () => {
     it('should calculate level 1 for 0 XP', () => {
       const level = calculateLevel(0)
-      expect(level).toBe(1)
+      expect(level.level).toBe(1)
     })
   })
 })
