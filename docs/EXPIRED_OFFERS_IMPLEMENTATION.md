@@ -13,8 +13,7 @@ This implementation automatically changes the status of meeting invitations from
 
 ### 2. Multiple Execution Methods
 - **Real-time**: Automatically checked when users view their offers
-- **Scheduled**: Runs every hour via Vercel cron job
-- **Manual**: Can be triggered manually via API endpoint
+- **Scheduled**: Runs daily via Vercel cron job
 
 ### 3. Database Functions
 - Optimized database functions for efficient bulk operations
@@ -37,21 +36,21 @@ CREATE TABLE meeting_invitations (
 
 ### API Endpoints
 
-#### 1. `/api/offers/expire` (POST)
+#### 1. `/api/offers/expire` (GET, cron only)
 - **Purpose**: Expire all outdated meeting invitations
-- **Authentication**: Required
-- **Response**: JSON with count of expired offers and details
+- **Authentication**: `Authorization: Bearer $CRON_SECRET`, which Vercel sends on cron calls. Anything else gets 401
+- **Database access**: Service role (`SUPABASE_SERVICE_ROLE_KEY`). There is no user session, and the
+  RLS policies only let participants update an invitation, so the anon key would update nothing
+- **Response**: JSON with the count and ids of expired offers
 
-#### 2. `/api/offers/expire` (GET)
-- **Purpose**: Check for expired offers without updating them
-- **Authentication**: Required
-- **Response**: JSON with list of expired offers (for monitoring)
-
-#### 3. `/api/offers` (GET)
+#### 2. `/api/offers` (GET)
 - **Enhanced**: Now automatically expires offers before returning results
 - **Benefit**: Users always see up-to-date offer statuses
 
 ### Database Functions
+
+The API no longer calls these. Their SQL is not in this repo, so the cron runs one
+conditional `UPDATE` (pending and past `meeting_date` → `denied`) that the tests cover.
 
 #### `expire_outdated_meeting_invitations()`
 - Finds all pending invitations past their meeting date
@@ -71,24 +70,20 @@ CREATE TABLE meeting_invitations (
   "crons": [
     {
       "path": "/api/offers/expire",
-      "schedule": "0 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
 ```
 
-- **Schedule**: Every hour at minute 0 (`0 * * * *`)
+- **Schedule**: Daily at 00:00 UTC (`0 0 * * *`)
 - **Purpose**: Ensures offers are expired even if users don't access the system
 
 ## Usage Examples
 
-### Manual Expiration Check
+### Manual Run (local or preview only)
 ```bash
-# Check for expired offers (read-only)
-curl -X GET /api/offers/expire
-
-# Expire outdated offers
-curl -X POST /api/offers/expire
+curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/offers/expire
 ```
 
 ### Database Function Usage
@@ -131,9 +126,9 @@ WHERE status = 'pending';
 
 ## Error Handling
 
-### Fallback Mechanisms
-- If database function fails, falls back to manual SQL queries
-- Graceful error handling with proper HTTP status codes
+### Failure Behaviour
+- Missing or wrong `CRON_SECRET` → 401, nothing runs
+- Missing `SUPABASE_SERVICE_ROLE_KEY` or a database error → 500, logged in Vercel
 - Logging for monitoring and debugging
 
 ### Error Types
@@ -149,10 +144,8 @@ WHERE status = 'pending';
 - Error conditions and fallbacks
 - Performance metrics
 
-### Monitoring Endpoints
-- GET `/api/offers/expire` for status checks
-- Database function results for analytics
-- Cron job execution logs in Vercel
+### Monitoring
+- Cron job execution logs in Vercel (each run logs how many offers it expired)
 
 ## Testing
 

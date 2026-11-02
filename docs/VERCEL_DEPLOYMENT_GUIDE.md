@@ -32,6 +32,9 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
+# Cron (Required): authenticates Vercel's call to /api/offers/expire
+CRON_SECRET=random_string_of_16_or_more_characters
+
 # NextAuth.js Configuration (Required)
 NEXTAUTH_URL=https://your-app.vercel.app
 NEXTAUTH_SECRET=your_nextauth_secret_key
@@ -88,7 +91,8 @@ vercel --prod
 #### Cron Jobs
 - ✅ **Automatically configured** via `vercel.json`
 - **Path**: `/api/offers/expire`
-- **Schedule**: `0 * * * *` (every hour)
+- **Schedule**: `0 0 * * *` (daily at 00:00 UTC)
+- **Requires**: `CRON_SECRET` (Vercel sends it as a bearer token) and `SUPABASE_SERVICE_ROLE_KEY`. Without them the job returns 401 or 500 and expires nothing
 
 ## 🔧 Post-Deployment Configuration
 
